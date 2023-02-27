@@ -1,0 +1,21 @@
+body{
+    background-color:  #dde6c8;
+    margin-left: 280px;
+    margin-right: 290px;
+  }
+
+  #registerMain {
+    background-color: #fafdd6;
+    padding: 30px 0px 30px 40px;
+    font-family: sans-serif;
+    border-radius: 50px;
+    box-shadow: 5px 5px 30px 10px grey;
+    
+  }
+
+  h2{
+    text-align: center;
+     color: black;
+      padding-top: 10px; 
+      text-decoration: underline;
+  }
