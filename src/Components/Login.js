@@ -1,16 +1,22 @@
-import axios from "axios";
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import '../loginApp.css';
+import { LoginAction } from "../Store/Actions/LoginAction";
+import { useDispatch, useSelector } from 'react-redux';
+
 
 function Login() {
 
     const [uname, setUname] = useState('');
     const [upwd, setUpwd] = useState('');
 
+    const nav = useNavigate();
+
     const [formErrors, setFormErrors] = useState({});
 
-    const nav = useNavigate();
+    const dispatch = useDispatch();
+
+    const loggedIn = useSelector(state=>state.loginReducer.loggedInUser);
 
     const handleLogin = () => {
 
@@ -28,35 +34,29 @@ function Login() {
                 username: uname,
                 password: upwd
             }
-            axios.post("http://localhost:8080/auth/login", payload)
-                .then(resp => {
-                    const loggedIn = resp.data;
-                    const myObj = {
-                        userId: loggedIn.userId,
-                        firstName: loggedIn.firstName,
-                        lastName: loggedIn.lastName,
-                        role: loggedIn.role
-                    }
-                    localStorage.setItem("myuser", JSON.stringify(myObj));
-
-                    const role = loggedIn.role;
-                    if (role === 'customer') { nav("/customer/dashboard"); }
-                    if (role === 'admin') {nav("/admin/dashboard");}
-
-                })
-                .catch(error => alert(error.response.data))
+            dispatch(LoginAction(payload))
         }
     }
 
     return (
         <div className="container">
+
             <h2>जड़ीबूटी.com</h2>
             <div id="main">
                 <h4>LOGIN</h4>
+             {  
+             loggedIn !==null &&
+                loggedIn.role === 'customer' ?
+                nav('/customer/dashboard'):
+                loggedIn.role === 'admin' ?
+                nav('/admin/dashboard'):
+                
+               <div>    
                 <div className="form-group">
 
                     <input type='text' name='uname' value={uname} placeholder='Enter username'
-                        onChange={event => setUname(event.target.value)} style={{borderRadius:'10px'}} />
+                        onChange={event => setUname(event.target.value)}
+                        style={{ borderRadius: '10px' }} />
                     <div>
                         {
                             formErrors.uNameErr &&
@@ -69,7 +69,8 @@ function Login() {
                 <div className="form-group">
 
                     <input type='password' name='upwd' value={upwd} placeholder='Enter password'
-                        onChange={event => setUpwd(event.target.value)} style={{borderRadius:'10px'}}/>
+                        onChange={event => setUpwd(event.target.value)}
+                        style={{ borderRadius: '10px' }} />
                     <div>
                         {
                             formErrors.uPwdErr &&
@@ -87,13 +88,19 @@ function Login() {
                         }
                     </div>
                 </div>
+
+
                 <div>
                     <button className="btn btn-success" onClick={handleLogin}
                         style={{ textAlign: 'center' }}>Login</button>
                 </div>
+
                 <p>Don't have an account, yet? <br /> <Link to='/register'>Register here</Link></p>
+                </div>
+}
             </div>
-           
+            
+
         </div>
     )
 }
